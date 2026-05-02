@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kebab Box — Fried Chicken Kebabs. Done Right.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--red:#db0007;--red-dark:#b50006;--red-glow:rgba(219,0,7,0.25);--ivory:#fffff0;--black:#28282B;--black2:#323235;--black3:#3e3e42;--white:#fff}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--black);color:var(--ivory);overflow-x:hidden;cursor:default}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:3px}
+
+/* ── NAV ── */
+#nav{position:fixed;top:0;left:0;right:0;z-index:9000;padding:1.4rem 3rem;display:flex;align-items:center;justify-content:space-between;transition:all .35s ease}
+#nav.solid{background:var(--black);padding:1rem 3rem;box-shadow:0 2px 30px rgba(0,0,0,.6)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:2.1rem;letter-spacing:3px;color:var(--ivory);cursor:pointer;user-select:none;transition:opacity .2s}
+.nav-logo span{color:var(--red)}
+.nav-logo:hover{opacity:.85}
+.nav-links{display:flex;gap:2.2rem;list-style:none}
+.nav-links a{color:var(--ivory);text-decoration:none;font-size:.82rem;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;opacity:.65;transition:all .2s;cursor:pointer;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1.5px;background:var(--red);transform:scaleX(0);transition:transform .25s ease}
+.nav-links a:hover,.nav-links a.on{opacity:1;color:var(--ivory)}
+.nav-links a:hover::after,.nav-links a.on::after{transform:scaleX(1)}
+.nav-cta{background:var(--red);color:#fff;padding:.6rem 1.6rem;border-radius:5px;font-weight:700;font-size:.8rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border:none;transition:all .25s}
+.nav-cta:hover{background:var(--red-dark);transform:translateY(-2px);box-shadow:0 6px 20px var(--red-glow)}
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.ham span{display:block;width:22px;height:2px;background:var(--ivory);border-radius:2px;transition:all .3s}
+
+/* ── MOBILE MENU ── */
+#mob{display:none;position:fixed;inset:0;background:var(--black);z-index:8999;flex-direction:column;align-items:center;justify-content:center;gap:1.8rem}
+#mob.show{display:flex}
+#mob a{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;letter-spacing:4px;color:var(--ivory);cursor:pointer;transition:color .2s}
+#mob a:hover{color:var(--red)}
+.mob-close{position:absolute;top:1.5rem;right:2rem;font-size:2rem;cursor:pointer;color:var(--ivory);line-height:1}
+
+/* ── PAGES ── */
+.pg{display:none}
+.pg.on{display:block}
+
+/* ── FLOAT BTN ── */
+#floatbtn{position:fixed;bottom:2rem;right:2rem;z-index:8000;background:var(--red);color:#fff;padding:.85rem 1.8rem;border-radius:50px;font-weight:700;font-size:.82rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border:none;display:flex;align-items:center;gap:.5rem;box-shadow:0 8px 30px var(--red-glow);transition:all .3s;animation:floatup .6s 1.2s ease both}
+#floatbtn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 14px 40px var(--red-glow)}
+@keyframes floatup{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SCROLL ANIM ── */
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .75s ease,transform .75s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal-l{opacity:0;transform:translateX(-36px);transition:opacity .7s ease,transform .7s ease}
+.reveal-l.in{opacity:1;transform:translateX(0)}
+.reveal-r{opacity:0;transform:translateX(36px);transition:opacity .7s ease,transform .7s ease}
+.reveal-r.in{opacity:1;transform:translateX(0)}
+
+/* ── TYPOGRAPHY ── */
+.lbl{font-size:.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:.8rem}
+.h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.2rem,7vw,6.5rem);line-height:.93;letter-spacing:2px;color:var(--ivory)}
+.h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,4.5vw,4rem);line-height:.97;letter-spacing:1.5px;color:var(--ivory)}
+.h3{font-family:'Barlow Condensed',sans-serif;font-size:1.35rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ivory)}
+.sub{font-size:.95rem;color:rgba(255,255,240,.55);line-height:1.75;max-width:520px}
+.accent{color:var(--red)}
+
+/* ── BUTTONS ── */
+.btn-r{background:var(--red);color:#fff;padding:.9rem 2rem;border-radius:5px;font-weight:700;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:.5rem;transition:all .25s;text-decoration:none}
+.btn-r:hover{background:var(--red-dark);transform:translateY(-2px);box-shadow:0 8px 25px var(--red-glow)}
+.btn-o{background:transparent;color:var(--ivory);padding:.9rem 2rem;border-radius:5px;font-weight:600;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border:1.5px solid rgba(255,255,240,.25);display:inline-flex;align-items:center;gap:.5rem;transition:all .25s;text-decoration:none}
+.btn-o:hover{border-color:var(--ivory);background:rgba(255,255,240,.05)}
+.btn-w{background:#fff;color:var(--red);padding:.9rem 2.2rem;border-radius:5px;font-weight:700;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:.5rem;transition:all .25s}
+.btn-w:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,.2)}
+
+/* ── SECTION ── */
+.sec{padding:5.5rem 3rem;max-width:1200px;margin:0 auto}
+.sec-full{padding:5.5rem 3rem;max-width:100%;margin:0}
+
+/* ═══════════════════════════════════
+   HOME — HERO
+═══════════════════════════════════ */
+#hero{height:100vh;min-height:620px;background:var(--black);position:relative;overflow:hidden;display:flex;align-items:center}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 75% 50%,rgba(219,0,7,.14),transparent),radial-gradient(ellipse 50% 60% at 20% 70%,rgba(219,0,7,.07),transparent)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(219,0,7,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(219,0,7,.04) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse at 60% 50%,black 30%,transparent 70%)}
+.hero-inner{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 3rem;padding-top:90px;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:2rem;width:100%}
+.hero-badge{display:inline-flex;align-items:center;gap:.6rem;background:rgba(219,0,7,.12);border:1px solid rgba(219,0,7,.3);padding:.4rem 1.1rem;border-radius:50px;font-size:.72rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--red);margin-bottom:1.6rem;animation:fadeup .8s ease both}
+.badge-dot{width:6px;height:6px;background:var(--red);border-radius:50%;animation:blink 1.6s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.hero-h{animation:fadeup .8s .15s ease both}
+.hero-p{font-size:1.05rem;color:rgba(255,255,240,.6);line-height:1.7;max-width:420px;margin-bottom:2rem;animation:fadeup .8s .3s ease both}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;animation:fadeup .8s .45s ease both}
+.hero-stats{display:flex;gap:2.5rem;margin-top:3rem;animation:fadeup .8s .6s ease both}
+.hstat-n{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;color:var(--red);letter-spacing:1px;line-height:1}
+.hstat-l{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,240,.4);margin-top:.2rem}
+@keyframes fadeup{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+/* Hero Visual */
+.hero-vis{display:flex;justify-content:center;align-items:center;position:relative;height:460px;animation:fadeup .9s .2s ease both}
+.hero-ring1{position:absolute;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(219,0,7,.18),transparent 65%);animation:pulse 3.5s ease-in-out infinite}
+.hero-ring2{position:absolute;width:310px;height:310px;border-radius:50%;border:1px solid rgba(219,0,7,.2);animation:spin 22s linear infinite}
+.hero-ring2::before{content:'';position:absolute;top:-5px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:var(--red);border-radius:50%;box-shadow:0 0 12px var(--red)}
+.hero-ring3{position:absolute;width:240px;height:240px;border-radius:50%;border:1px dashed rgba(219,0,7,.12);animation:spin 14s linear infinite reverse}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.hero-icon{font-size:8rem;position:relative;z-index:3;animation:float 4s ease-in-out infinite;filter:drop-shadow(0 20px 40px rgba(219,0,7,.35))}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-18px) rotate(3deg)}}
+.htag{position:absolute;background:var(--black2);border:1px solid rgba(255,255,240,.1);padding:.45rem 1rem;border-radius:50px;font-size:.75rem;font-weight:600;letter-spacing:.5px;white-space:nowrap;backdrop-filter:blur(4px)}
+.htag1{top:12%;right:2%;animation:float 3.2s .4s ease-in-out infinite}
+.htag2{bottom:20%;right:-4%;animation:float 4s .9s ease-in-out infinite}
+.htag3{top:45%;left:-8%;animation:float 3.6s .2s ease-in-out infinite}
+
+/* Scroll hint */
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;color:rgba(255,255,240,.3);font-size:.68rem;letter-spacing:3px;text-transform:uppercase;animation:fadeup .8s 1.2s ease both}
+.scroll-line{width:1px;height:44px;background:linear-gradient(to bottom,transparent,rgba(219,0,7,.5));animation:scrollpulse 2.2s ease-in-out infinite}
+@keyframes scrollpulse{0%{opacity:0;transform:scaleY(0)transform-origin:top}50%{opacity:1;transform:scaleY(1)}100%{opacity:0}}
+
+/* ── TICKER ── */
+.ticker{background:var(--red);padding:.65rem 0;overflow:hidden}
+.ticker-t{display:flex;width:max-content;animation:tick 28s linear infinite}
+.ticker-t:hover{animation-play-state:paused}
+.ticker-i{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#fff;padding:0 2rem;white-space:nowrap;display:flex;align-items:center;gap:.75rem}
+.ticker-i::after{content:'✦';font-size:.6rem;opacity:.7}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── MENU CARDS (HOME) ── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.5rem}
+.mcard{background:var(--black2);border-radius:16px;overflow:hidden;cursor:pointer;position:relative;border:1px solid rgba(255,255,240,.06);transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease}
+.mcard:hover{transform:translateY(-10px);box-shadow:0 24px 60px rgba(219,0,7,.2);border-color:rgba(219,0,7,.35)}
+.mcard-vis{height:200px;background:var(--black);display:flex;align-items:center;justify-content:center;font-size:5.5rem;position:relative;overflow:hidden;transition:background .3s}
+.mcard:hover .mcard-vis{background:rgba(219,0,7,.06)}
+.mcard-emoji{transition:transform .45s cubic-bezier(.175,.885,.32,1.275);z-index:2;position:relative;user-select:none}
+.mcard:hover .mcard-emoji{transform:scale(1.22) rotate(-6deg)}
+.badge{position:absolute;top:1rem;right:1rem;background:var(--red);color:#fff;font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:.28rem .7rem;border-radius:50px;animation:badgepulse 2.2s ease-in-out infinite}
+@keyframes badgepulse{0%,100%{box-shadow:0 0 0 0 rgba(219,0,7,.5)}60%{box-shadow:0 0 0 7px transparent}}
+.mcard-body{padding:1.4rem}
+.mcard-name{font-family:'Barlow Condensed',sans-serif;font-size:1.35rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ivory);margin-bottom:.35rem}
+.mcard-desc{font-size:.83rem;color:rgba(255,255,240,.5);line-height:1.55;margin-bottom:.9rem}
+.mcard-tags{display:flex;gap:.45rem;flex-wrap:wrap}
+.tag{font-size:.65rem;letter-spacing:1px;text-transform:uppercase;padding:.22rem .6rem;border-radius:50px;border:1px solid rgba(219,0,7,.4);color:var(--red);font-weight:700}
+.mcard-overlay{position:absolute;inset:0;background:rgba(219,0,7,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.1rem;opacity:0;transition:opacity .3s ease;backdrop-filter:blur(2px)}
+.mcard:hover .mcard-overlay{opacity:1}
+.mcard-ol-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;color:#fff}
+.mcard-ol-btn{background:#fff;color:var(--red);font-weight:700;font-size:.8rem;letter-spacing:1.5px;text-transform:uppercase;padding:.65rem 1.5rem;border-radius:4px;border:none;cursor:pointer;transition:transform .2s}
+.mcard-ol-btn:hover{transform:scale(1.06)}
+
+/* ── SYSTEMS ── */
+.sys-wrap{background:var(--ivory);color:var(--black);padding:6rem 3rem}
+.sys-inner{max-width:1200px;margin:0 auto}
+.sys-wrap .lbl{color:var(--red)}
+.sys-wrap .h2{color:var(--black)}
+.sys-wrap .sub{color:rgba(40,40,43,.6)}
+.sys-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;margin-top:4rem}
+.pillars{display:flex;flex-direction:column;gap:1.3rem}
+.pillar{display:flex;align-items:flex-start;gap:1.4rem;padding:1.4rem;border-radius:12px;background:rgba(40,40,43,.04);border:1px solid rgba(40,40,43,.07);transition:all .3s;cursor:default}
+.pillar:hover{background:rgba(219,0,7,.05);border-color:rgba(219,0,7,.18);transform:translateX(8px)}
+.picon{width:50px;height:50px;border-radius:12px;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;transition:transform .3s}
+.pillar:hover .picon{transform:scale(1.1) rotate(-5deg)}
+.ptxt h3{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--black);margin-bottom:.3rem}
+.ptxt p{font-size:.87rem;color:rgba(40,40,43,.6);line-height:1.55}
+.sys-card{background:var(--black);border-radius:20px;padding:2.5rem;max-width:380px;width:100%;position:relative;overflow:hidden;margin:0 auto}
+.sys-card::before{content:'';position:absolute;top:-60%;right:-60%;width:200%;height:200%;background:radial-gradient(circle at 70% 30%,rgba(219,0,7,.12),transparent 50%)}
+.sys-card-t{font-family:'Bebas Neue',sans-serif;font-size:2.3rem;letter-spacing:2px;color:var(--ivory);margin-bottom:.4rem}
+.sys-card-s{font-size:.82rem;color:rgba(255,255,240,.4);margin-bottom:2rem}
+.steps{display:flex;flex-direction:column;gap:1.1rem}
+.step{display:flex;align-items:center;gap:1.1rem}
+.snum{width:30px;height:30px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:1px;color:#fff;flex-shrink:0}
+.stxt{font-size:.88rem;color:rgba(255,255,240,.65);line-height:1.4}
+.stxt strong{color:var(--ivory)}
+
+/* ── COMBOS ── */
+.combos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1.5rem;margin-top:3rem}
+.ccard{background:linear-gradient(135deg,var(--black2),rgba(50,50,53,.5));border-radius:16px;padding:2rem;border:1px solid rgba(255,255,240,.07);position:relative;overflow:hidden;cursor:pointer;transition:all .35s ease}
+.ccard::after{content:'';position:absolute;bottom:-60%;right:-30%;width:220px;height:220px;background:radial-gradient(circle,rgba(219,0,7,.1),transparent 65%);transition:all .4s}
+.ccard:hover{transform:translateY(-7px);border-color:rgba(219,0,7,.3)}
+.ccard:hover::after{bottom:-20%;right:-10%}
+.ccard-icon{font-size:2.8rem;margin-bottom:1rem;display:block}
+.ccard-name{font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ivory);margin-bottom:.4rem}
+.ccard-desc{font-size:.83rem;color:rgba(255,255,240,.5);line-height:1.55;margin-bottom:1.2rem}
+.ccard-list{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1.5rem}
+.ccard-li{font-size:.78rem;color:rgba(255,255,240,.6);display:flex;align-items:center;gap:.5rem}
+.ccard-li::before{content:'✓';color:var(--red);font-weight:700;font-size:.85rem}
+
+/* ── PROOF ── */
+.proof-wrap{background:rgba(219,0,7,.04);border-top:1px solid rgba(219,0,7,.1);border-bottom:1px solid rgba(219,0,7,.1);padding:5.5rem 3rem}
+.proof-inner{max-width:1200px;margin:0 auto}
+.proof-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.4rem;margin-top:3rem}
+.pcard{background:var(--black2);border-radius:12px;padding:1.6rem;border:1px solid rgba(255,255,240,.06);transition:transform .3s}
+.pcard:hover{transform:translateY(-5px)}
+.pstars{color:#fbbf24;font-size:.9rem;margin-bottom:.8rem;letter-spacing:2px}
+.ptext{font-size:.87rem;color:rgba(255,255,240,.7);line-height:1.65;margin-bottom:1rem;font-style:italic}
+.pauthor{display:flex;align-items:center;gap:.75rem}
+.pavatar{width:36px;height:36px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.88rem;color:#fff;flex-shrink:0}
+.pname{font-size:.83rem;font-weight:600;color:var(--ivory)}
+.ploc{font-size:.72rem;color:rgba(255,255,240,.35)}
+
+/* ── FRANCHISE TEASER ── */
+.ft-wrap{background:var(--black);text-align:center;padding:5.5rem 3rem}
+.ft-inner{max-width:640px;margin:0 auto}
+
+/* ═══════════════════════════════════
+   MENU PAGE
+═══════════════════════════════════ */
+.menu-hero{padding-top:130px;padding-bottom:3rem;text-align:center;padding-left:3rem;padding-right:3rem}
+.menu-cats{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin:2rem 0 3.5rem}
+.mcat{padding:.55rem 1.4rem;border-radius:50px;font-size:.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border:1.5px solid rgba(255,255,240,.18);background:transparent;color:rgba(255,255,240,.55);transition:all .22s}
+.mcat.on,.mcat:hover{background:var(--red);border-color:var(--red);color:#fff}
+.menu-grid-wrap{padding:0 3rem 5rem;max-width:1200px;margin:0 auto}
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem}
+.menu-item{display:none}
+.menu-item.show{display:block}
+.mi-card{background:var(--black2);border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,240,.06);cursor:pointer;transition:all .35s}
+.mi-card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(219,0,7,.2);border-color:rgba(219,0,7,.3)}
+.mi-top{height:190px;background:var(--black);display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;overflow:hidden;transition:background .3s}
+.mi-card:hover .mi-top{background:rgba(219,0,7,.06)}
+.mi-emoji{transition:transform .4s cubic-bezier(.175,.885,.32,1.275)}
+.mi-card:hover .mi-emoji{transform:scale(1.2) rotate(-5deg)}
+.mi-body{padding:1.3rem}
+.mi-name{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ivory);margin-bottom:.3rem}
+.mi-desc{font-size:.82rem;color:rgba(255,255,240,.5);line-height:1.55;margin-bottom:.9rem}
+.mi-footer{display:flex;align-items:center;justify-content:space-between}
+.mi-order{background:var(--red);color:#fff;font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:.5rem 1.1rem;border-radius:4px;border:none;cursor:pointer;transition:all .2s}
+.mi-order:hover{background:var(--red-dark);transform:scale(1.04)}
+.mi-tag{font-size:.68rem;color:rgba(255,255,240,.4);letter-spacing:.5px}
+
+/* ═══════════════════════════════════
+   ABOUT PAGE
+═══════════════════════════════════ */
+.about-hero{padding-top:130px;overflow:hidden;background:var(--black)}
+.about-hero-inner{max-width:1200px;margin:0 auto;padding:0 3rem 5.5rem;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.about-h{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,6vw,5.5rem);line-height:.93;letter-spacing:2px;color:var(--ivory);margin-bottom:2rem}
+.about-body{font-size:.95rem;color:rgba(255,255,240,.6);line-height:1.8}
+.about-body p{margin-bottom:1rem}
+.about-body strong{color:var(--ivory)}
+.about-vis{position:relative;display:flex;justify-content:center;align-items:center;height:360px}
+.about-circle{width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(219,0,7,.15),transparent 65%);position:absolute}
+.about-icon-big{font-size:7rem;position:relative;z-index:2;animation:float 4s ease-in-out infinite}
+
+/* Values Strip */
+.val-strip{background:var(--red);padding:4rem 3rem}
+.val-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+.val-item{text-align:center}
+.val-big{font-family:'Bebas Neue',sans-serif;font-size:5rem;letter-spacing:2px;color:rgba(255,255,255,.15);line-height:1}
+.val-title{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;margin-bottom:.4rem}
+.val-desc{font-size:.84rem;color:rgba(255,255,255,.75);line-height:1.55}
+
+/* Timeline */
+.timeline-wrap{padding:5.5rem 3rem;max-width:1200px;margin:0 auto}
+.tl{display:flex;flex-direction:column;gap:0;margin-top:3rem;position:relative}
+.tl::before{content:'';position:absolute;left:25px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--red),transparent)}
+.tl-item{display:flex;gap:2rem;padding-bottom:3rem;align-items:flex-start}
+.tl-dot{width:52px;height:52px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;position:relative;z-index:1}
+.tl-title{font-family:'Barlow Condensed',sans-serif;font-size:1.25rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ivory);margin-bottom:.4rem}
+.tl-desc{font-size:.88rem;color:rgba(255,255,240,.5);line-height:1.6}
+
+/* Team metric */
+.brand-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;padding:3rem;background:var(--black2);border-radius:20px;margin-top:3rem;border:1px solid rgba(255,255,240,.05)}
+.bnum-item{text-align:center}
+.bnum-n{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--red);letter-spacing:1px;line-height:1}
+.bnum-l{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,240,.4);margin-top:.3rem}
+
+/* ═══════════════════════════════════
+   LOCATIONS PAGE
+═══════════════════════════════════ */
+.loc-hero{padding-top:130px;padding-bottom:3rem;text-align:center;padding-left:3rem;padding-right:3rem}
+.city-pills{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0}
+.cpill{padding:.45rem 1.2rem;border-radius:50px;font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:1.5px solid rgba(255,255,240,.18);background:transparent;color:rgba(255,255,240,.55);transition:all .22s}
+.cpill.on{background:var(--red);border-color:var(--red);color:#fff}
+.loc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;padding:0 3rem 4rem;max-width:1200px;margin:0 auto}
+.loc-card{background:var(--black2);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,240,.06);transition:all .35s}
+.loc-card:hover{transform:translateY(-7px);border-color:rgba(219,0,7,.3);box-shadow:0 18px 50px rgba(219,0,7,.15)}
+.loc-map{height:155px;background:rgba(219,0,7,.06);display:flex;align-items:center;justify-content:center;font-size:3rem;border-bottom:1px solid rgba(255,255,240,.05);position:relative;overflow:hidden}
+.loc-map::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 24px,rgba(219,0,7,.06) 24px,rgba(219,0,7,.06) 25px),repeating-linear-gradient(90deg,transparent,transparent 24px,rgba(219,0,7,.06) 24px,rgba(219,0,7,.06) 25px)}
+.loc-pin{position:relative;z-index:2;animation:float 3s ease-in-out infinite}
+.loc-body{padding:1.4rem}
+.loc-name{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ivory);margin-bottom:.35rem}
+.loc-addr{font-size:.83rem;color:rgba(255,255,240,.5);line-height:1.5;margin-bottom:.4rem}
+.loc-hrs{font-size:.78rem;color:var(--red);font-weight:700;letter-spacing:.5px}
+.loc-btns{display:flex;gap:.7rem;margin-top:1.1rem}
+.lbtn{flex:1;padding:.58rem;border-radius:5px;font-size:.75rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;border:none;transition:all .2s;text-align:center}
+.lbtn-r{background:var(--red);color:#fff}
+.lbtn-r:hover{background:var(--red-dark)}
+.lbtn-s{background:rgba(255,255,240,.06);color:var(--ivory);border:1px solid rgba(255,255,240,.1)}
+.lbtn-s:hover{background:rgba(255,255,240,.1)}
+
+/* Coming Soon cards */
+.loc-soon{opacity:.5}
+.loc-soon .loc-map{background:rgba(255,255,240,.03)}
+.soon-badge{position:absolute;top:.8rem;left:.8rem;z-index:3;background:rgba(40,40,43,.9);border:1px solid rgba(255,255,240,.15);color:rgba(255,255,240,.6);font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:.25rem .7rem;border-radius:50px}
+
+/* ═══════════════════════════════════
+   FRANCHISE PAGE
+═══════════════════════════════════ */
+.fran-hero{padding-top:130px;background:var(--black);position:relative;overflow:hidden}
+.fran-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(219,0,7,.12),transparent 60%)}
+.fran-hero-inner{max-width:1200px;margin:0 auto;padding:0 3rem 5.5rem;display:grid;grid-template-columns:1.1fr .9fr;gap:5rem;align-items:center;position:relative;z-index:1}
+.fran-kpi{display:flex;gap:1.5rem;margin-top:2.5rem;flex-wrap:wrap}
+.fkpi{background:var(--black2);border-radius:12px;padding:1.2rem 1.5rem;border:1px solid rgba(255,255,240,.06);flex:1;min-width:110px}
+.fkpi-n{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--red);letter-spacing:1px;line-height:1}
+.fkpi-l{font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,240,.4);margin-top:.2rem}
+.fran-vis{position:relative;display:flex;justify-content:center;align-items:center;height:340px}
+.fran-icon{font-size:6.5rem;animation:float 4s ease-in-out infinite;filter:drop-shadow(0 16px 30px rgba(219,0,7,.25))}
+
+/* Why Franchise */
+.why-wrap{background:var(--ivory);color:var(--black);padding:5.5rem 3rem}
+.why-inner{max-width:1200px;margin:0 auto}
+.why-wrap .lbl{color:var(--red)}
+.why-wrap .h2{color:var(--black)}
+.why-wrap .sub{color:rgba(40,40,43,.6)}
+.why-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1.3rem;margin-top:3rem}
+.wcard{background:#fff;border-radius:12px;padding:1.6rem;box-shadow:0 3px 18px rgba(0,0,0,.06);transition:all .3s;border:1px solid rgba(0,0,0,.05)}
+.wcard:hover{transform:translateY(-5px);box-shadow:0 12px 32px rgba(219,0,7,.12)}
+.wicon{font-size:1.9rem;margin-bottom:.9rem}
+.wtitle{font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--black);margin-bottom:.35rem}
+.wdesc{font-size:.83rem;color:rgba(40,40,43,.6);line-height:1.55}
+
+/* Investment */
+.inv-sec{padding:5.5rem 3rem;background:var(--black)}
+.inv-inner{max-width:1200px;margin:0 auto}
+.inv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:3rem}
+.inv-card{background:var(--black2);border-radius:16px;padding:2.3rem;border:1px solid rgba(255,255,240,.07);transition:all .35s;text-align:center;position:relative}
+.inv-card:hover{transform:translateY(-7px)}
+.inv-card.feat{border-color:var(--red);background:rgba(219,0,7,.07)}
+.inv-card.feat::before{content:'POPULAR';position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;font-size:.62rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;padding:.25rem .9rem;border-radius:50px}
+.inv-type{font-size:.68rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:.5rem}
+.inv-name{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:2px;color:var(--ivory);margin-bottom:1rem}
+.inv-amt{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--red);letter-spacing:1px;line-height:1}
+.inv-unit{font-size:.8rem;color:rgba(255,255,240,.35);margin-bottom:1.5rem}
+.inv-feats{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.8rem;text-align:left}
+.inv-feats li{font-size:.83rem;color:rgba(255,255,240,.6);display:flex;align-items:center;gap:.5rem}
+.inv-feats li::before{content:'→';color:var(--red);flex-shrink:0}
+
+/* Process */
+.proc-wrap{background:rgba(219,0,7,.04);padding:5.5rem 3rem}
+.proc-inner{max-width:1200px;margin:0 auto}
+.proc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.8rem;margin-top:3rem}
+.proc-step{text-align:center;padding:2rem 1rem}
+.proc-n{font-family:'Bebas Neue',sans-serif;font-size:4.5rem;color:rgba(219,0,7,.18);letter-spacing:2px;line-height:1}
+.proc-icon{font-size:2rem;margin-bottom:.7rem}
+.proc-title{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ivory);margin-bottom:.35rem}
+.proc-desc{font-size:.8rem;color:rgba(255,255,240,.5);line-height:1.5}
+
+/* Franchise CTA */
+.fran-cta{background:var(--red);padding:5rem 3rem;text-align:center}
+.fran-cta-inner{max-width:600px;margin:0 auto}
+.fran-cta-t{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;letter-spacing:3px;color:#fff;margin-bottom:.9rem;line-height:1}
+.fran-cta-s{font-size:.95rem;color:rgba(255,255,255,.8);margin-bottom:2rem;line-height:1.6}
+
+/* ═══════════════════════════════════
+   CONTACT PAGE
+═══════════════════════════════════ */
+.cont-hero{padding-top:130px;padding-bottom:3rem;text-align:center;padding-left:3rem;padding-right:3rem}
+.cont-wrap{max-width:1200px;margin:0 auto;padding:0 3rem 5.5rem;display:grid;grid-template-columns:1fr 1.6fr;gap:4rem}
+.cinfo-item{display:flex;align-items:flex-start;gap:1.1rem;margin-bottom:1.3rem;padding:1.4rem;background:var(--black2);border-radius:12px;border:1px solid rgba(255,255,240,.06);transition:all .3s}
+.cinfo-item:hover{border-color:rgba(219,0,7,.3)}
+.cicon{width:42px;height:42px;border-radius:9px;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.cilbl{font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:.2rem}
+.cival{font-size:.88rem;color:rgba(255,255,240,.7);line-height:1.4}
+.form-g{margin-bottom:1.1rem}
+.form-lbl{font-size:.72rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,240,.45);font-weight:700;display:block;margin-bottom:.45rem}
+.finp,.fsel,.ftxt{width:100%;padding:.85rem 1.1rem;background:var(--black2);border:1.5px solid rgba(255,255,240,.1);border-radius:8px;color:var(--ivory);font-family:'Outfit',sans-serif;font-size:.9rem;transition:border-color .2s;outline:none}
+.finp:focus,.fsel:focus,.ftxt:focus{border-color:var(--red)}
+.finp::placeholder,.ftxt::placeholder{color:rgba(255,255,240,.25)}
+.fsel option{background:var(--black)}
+.ftxt{min-height:120px;resize:vertical}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-note{font-size:.78rem;color:rgba(255,255,240,.35);margin-top:.6rem}
+
+/* ── FOOTER ── */
+footer{background:var(--black);border-top:1px solid rgba(255,255,240,.06);padding:4rem 3rem 2rem}
+.foot-inner{max-width:1200px;margin:0 auto}
+.foot-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.foot-logo{font-family:'Bebas Neue',sans-serif;font-size:2.3rem;letter-spacing:2px;color:var(--ivory);margin-bottom:.9rem;cursor:pointer}
+.foot-logo span{color:var(--red)}
+.foot-tag{font-size:.88rem;color:rgba(255,255,240,.4);line-height:1.65;max-width:240px}
+.socials{display:flex;gap:.7rem;margin-top:1.4rem}
+.soc{width:34px;height:34px;border-radius:7px;background:rgba(255,255,240,.05);display:flex;align-items:center;justify-content:center;font-size:.85rem;cursor:pointer;transition:all .2s;border:1px solid rgba(255,255,240,.07)}
+.soc:hover{background:var(--red);border-color:var(--red)}
+.fcol h4{font-size:.68rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,240,.35);font-weight:700;margin-bottom:1rem}
+.fcol ul{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+.fcol ul li{font-size:.88rem;color:rgba(255,255,240,.55);cursor:pointer;transition:color .2s}
+.fcol ul li:hover{color:var(--ivory)}
+.foot-bot{border-top:1px solid rgba(255,255,240,.06);padding-top:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.foot-copy{font-size:.78rem;color:rgba(255,255,240,.28)}
+.foot-love{font-size:.78rem;color:rgba(255,255,240,.28)}
+.foot-love span{color:var(--red)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero-inner,.about-hero-inner,.fran-hero-inner,.sys-grid,.cont-wrap{grid-template-columns:1fr}
+  .hero-vis,.sys-right,.fran-vis{display:none}
+  .hero-h{font-size:3.2rem}
+  .val-inner{grid-template-columns:1fr}
+  .inv-grid{grid-template-columns:1fr}
+  .foot-top{grid-template-columns:1fr 1fr;gap:2rem}
+  .brand-nums{grid-template-columns:repeat(2,1fr)}
+  #nav{padding:1.1rem 1.5rem}
+  #nav.solid{padding:.85rem 1.5rem}
+  .sec,.sec-full{padding:4rem 1.5rem}
+  .sys-wrap,.val-strip,.why-wrap,.inv-sec,.proc-wrap,.fran-cta,.proof-wrap{padding-left:1.5rem;padding-right:1.5rem}
+  .menu-hero,.loc-hero,.cont-hero,.fran-hero-inner,.timeline-wrap,.about-hero-inner,.menu-grid-wrap,.loc-grid,.cont-wrap{padding-left:1.5rem;padding-right:1.5rem}
+  .loc-grid{padding-left:1.5rem;padding-right:1.5rem}
+  .foot-inner,.foot-top{padding:0;gap:1.5rem}
+  footer{padding:3rem 1.5rem 1.5rem}
+  .form-row{grid-template-columns:1fr}
+  .nav-links,.nav-cta{display:none}
+  .ham{display:flex}
+  .hero-stats{gap:1.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav id="nav">
+  <div class="nav-logo" onclick="go('home')">KEBAB <span>BOX</span></div>
+  <ul class="nav-links">
+    <li><a class="nl on" data-p="home" onclick="go('home')">Home</a></li>
+    <li><a class="nl" data-p="menu" onclick="go('menu')">Menu</a></li>
+    <li><a class="nl" data-p="about" onclick="go('about')">About</a></li>
+    <li><a class="nl" data-p="locations" onclick="go('locations')">Locations</a></li>
+    <li><a class="nl" data-p="franchise" onclick="go('franchise')">Franchise</a></li>
+    <li><a class="nl" data-p="contact" onclick="go('contact')">Contact</a></li>
+  </ul>
+  <button class="nav-cta" onclick="order()">Order Now →</button>
+  <div class="ham" onclick="openMob()"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- ── MOBILE MENU ── -->
+<div id="mob">
+  <span class="mob-close" onclick="closeMob()">✕</span>
+  <a onclick="go('home');closeMob()">Home</a>
+  <a onclick="go('menu');closeMob()">Menu</a>
+  <a onclick="go('about');closeMob()">About</a>
+  <a onclick="go('locations');closeMob()">Locations</a>
+  <a onclick="go('franchise');closeMob()">Franchise</a>
+  <a onclick="go('contact');closeMob()">Contact</a>
+  <button class="btn-r" style="margin-top:.5rem" onclick="order();closeMob()">Order Now →</button>
+</div>
+
+<!-- ── FLOAT ── -->
+<button id="floatbtn" onclick="order()">🍗 Order Now</button>
+
+<!-- ══════════════════════════════
+     HOME
+══════════════════════════════ -->
+<div class="pg on" id="pg-home">
+
+  <!-- HERO -->
+  <section style="padding:0;max-width:100%">
+    <div id="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-grid"></div>
+      <div class="hero-inner">
+        <div class="hero-text">
+          <div class="hero-badge"><span class="badge-dot"></span> Now Open in Bengaluru</div>
+          <h1 class="h1 hero-h">Fried Chicken<br>Kebabs.<br><span class="accent">Done Right.</span></h1>
+          <p class="hero-p">Same crunch. Every time. Built on systems, not guesswork. Hot, fresh, and dangerously good.</p>
+          <div class="hero-btns">
+            <button class="btn-r" onclick="order()">Order Now →</button>
+            <button class="btn-o" onclick="go('menu')">See the Menu</button>
+          </div>
+          <div class="hero-stats">
+            <div><div class="hstat-n">3+</div><div class="hstat-l">Bengaluru Outlets</div></div>
+            <div><div class="hstat-n">100%</div><div class="hstat-l">Consistent Every Time</div></div>
+            <div><div class="hstat-n">&lt;8 min</div><div class="hstat-l">Hot to Your Hands</div></div>
+          </div>
+        </div>
+        <div class="hero-vis">
+          <div class="hero-ring1"></div>
+          <div class="hero-ring2"></div>
+          <div class="hero-ring3"></div>
+          <div class="hero-icon">🍗</div>
+          <div class="htag htag1">🔥 Extra Crispy</div>
+          <div class="htag htag2">⚡ Ready in Minutes</div>
+          <div class="htag htag3">✅ Same Crunch Every Time</div>
+        </div>
+      </div>
+      <div class="scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-t" id="tkr">
+      <div class="ticker-i">Fried Chicken Kebabs</div>
+      <div class="ticker-i">Same Crunch Every Time</div>
+      <div class="ticker-i">Built for Speed</div>
+      <div class="ticker-i">Made for Cravings</div>
+      <div class="ticker-i">No Guesswork</div>
+      <div class="ticker-i">Just Great Kebabs</div>
+      <div class="ticker-i">Bengaluru's Best</div>
+      <div class="ticker-i">Order Now</div>
+      <div class="ticker-i">Fried Chicken Kebabs</div>
+      <div class="ticker-i">Same Crunch Every Time</div>
+      <div class="ticker-i">Built for Speed</div>
+      <div class="ticker-i">Made for Cravings</div>
+      <div class="ticker-i">No Guesswork</div>
+      <div class="ticker-i">Just Great Kebabs</div>
+      <div class="ticker-i">Bengaluru's Best</div>
+      <div class="ticker-i">Order Now</div>
+    </div>
+  </div>
+
+  <!-- SIGNATURES -->
+  <section class="sec reveal">
+    <div style="text-align:center;margin-bottom:3.5rem">
+      <div class="lbl">Our Signatures</div>
+      <h2 class="h2">The Kebabs That Started It All</h2>
+      <p class="sub" style="margin:1rem auto 0">Every item is engineered for maximum crunch, minimum wait time, and zero disappointment.</p>
+    </div>
+    <div class="cards-grid">
+      <div class="mcard reveal" style="transition-delay:.05s">
+        <div class="mcard-vis">
+          <span class="badge">🔥 Bestseller</span>
+          <span class="mcard-emoji">🍗</span>
+        </div>
+        <div class="mcard-overlay">
+          <div class="mcard-ol-title">The Original</div>
+          <button class="mcard-ol-btn" onclick="order()">Order This →</button>
+        </div>
+        <div class="mcard-body">
+          <div class="mcard-name">Classic Crunch Kebab</div>
+          <p class="mcard-desc">Our OG. Crispy coat. Juicy inside. The one that started everything and keeps people coming back.</p>
+          <div class="mcard-tags"><span class="tag">Signature</span><span class="tag">Crispy</span></div>
+        </div>
+      </div>
+      <div class="mcard reveal" style="transition-delay:.12s">
+        <div class="mcard-vis"><span class="mcard-emoji">🌶️</span></div>
+        <div class="mcard-overlay">
+          <div class="mcard-ol-title">Heat Seeker</div>
+          <button class="mcard-ol-btn" onclick="order()">Order This →</button>
+        </div>
+        <div class="mcard-body">
+          <div class="mcard-name">Spicy Zinger Kebab</div>
+          <p class="mcard-desc">Fire-kissed marinade. Double-fried for extra crunch. Not for the faint-hearted. Very much for everyone else.</p>
+          <div class="mcard-tags"><span class="tag">Spicy</span><span class="tag">Bold</span></div>
+        </div>
+      </div>
+      <div class="mcard reveal" style="transition-delay:.18s">
+        <div class="mcard-vis">
+          <span class="badge">⭐ New</span>
+          <span class="mcard-emoji">🥙</span>
+        </div>
+        <div class="mcard-overlay">
+          <div class="mcard-ol-title">The Wrap Star</div>
+          <button class="mcard-ol-btn" onclick="order()">Order This →</button>
+        </div>
+        <div class="mcard-body">
+          <div class="mcard-name">Smoky Kebab Wrap</div>
+          <p class="mcard-desc">Crispy strips, smoky garlic sauce, crunchy slaw. Rolled tight. Eaten fast. Regretted never.</p>
+          <div class="mcard-tags"><span class="tag">Wrap</span><span class="tag">Smoky</span></div>
+        </div>
+      </div>
+      <div class="mcard reveal" style="transition-delay:.24s">
+        <div class="mcard-vis"><span class="mcard-emoji">📦</span></div>
+        <div class="mcard-overlay">
+          <div class="mcard-ol-title">The Full Send</div>
+          <button class="mcard-ol-btn" onclick="order()">Order This →</button>
+        </div>
+        <div class="mcard-body">
+          <div class="mcard-name">The Box Combo</div>
+          <p class="mcard-desc">3 signature kebabs, crispy fries, dip sauce. One box. Maximum satisfaction. Minimum overthinking.</p>
+          <div class="mcard-tags"><span class="tag">Combo</span><span class="tag">Value</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem">
+      <button class="btn-o" onclick="go('menu')">View Full Menu →</button>
+    </div>
+  </section>
+
+  <!-- SYSTEMS -->
+  <div class="sys-wrap reveal">
+    <div class="sys-inner">
+      <div class="lbl">Why We're Different</div>
+      <h2 class="h2" style="color:var(--black)">Built on Systems.<br>Served with Speed.</h2>
+      <p class="sub" style="color:rgba(40,40,43,.6);margin-top:.8rem">Kebab Box isn't just great food — it's great food, guaranteed. Every single time.</p>
+      <div class="sys-grid">
+        <div class="pillars reveal-l">
+          <div class="pillar">
+            <div class="picon">⚙️</div>
+            <div class="ptxt"><h3>Standardised Recipes</h3><p>Every kebab follows an exact process — from marination time to fry temperature. No guesswork. No variation. Just precision.</p></div>
+          </div>
+          <div class="pillar">
+            <div class="picon">⚡</div>
+            <div class="ptxt"><h3>Built for Speed</h3><p>Our kitchen is engineered for fast turnaround — without cutting corners on quality. Hot and fresh, every order, every time.</p></div>
+          </div>
+          <div class="pillar">
+            <div class="picon">✅</div>
+            <div class="ptxt"><h3>Consistent Quality</h3><p>Whether you're at our Indiranagar or Koramangala outlet — the taste, texture and crunch will always be identical.</p></div>
+          </div>
+        </div>
+        <div class="sys-right reveal-r">
+          <div class="sys-card">
+            <div class="sys-card-t">The KB Promise</div>
+            <div class="sys-card-s">What you get with every order</div>
+            <div class="steps">
+              <div class="step"><div class="snum">01</div><div class="stxt"><strong>Marinated fresh</strong> every single morning</div></div>
+              <div class="step"><div class="snum">02</div><div class="stxt"><strong>Fried to order</strong> — never pre-fried or reheated</div></div>
+              <div class="step"><div class="snum">03</div><div class="stxt"><strong>Sealed tight</strong> to lock in the crunch</div></div>
+              <div class="step"><div class="snum">04</div><div class="stxt"><strong>In your hands</strong> in under 8 minutes</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMBOS -->
+  <section class="sec reveal">
+    <div style="text-align:center;margin-bottom:.5rem">
+      <div class="lbl">Quick Picks</div>
+      <h2 class="h2">Combos for Every Craving</h2>
+      <p class="sub" style="margin:.8rem auto 0">No decision fatigue. Just pick your box and eat.</p>
+    </div>
+    <div class="combos-grid">
+      <div class="ccard reveal" style="transition-delay:.05s">
+        <span class="ccard-icon">🍗</span>
+        <div class="ccard-name">The Solo Box</div>
+        <p class="ccard-desc">Perfect when it's just you and your hunger. Classic crunch, no frills.</p>
+        <div class="ccard-list">
+          <div class="ccard-li">2 Classic Crunch Kebabs</div>
+          <div class="ccard-li">Crispy Fries</div>
+          <div class="ccard-li">Signature Dip</div>
+        </div>
+        <button class="btn-r" onclick="order()">Order Now →</button>
+      </div>
+      <div class="ccard reveal" style="transition-delay:.12s">
+        <span class="ccard-icon">🔥</span>
+        <div class="ccard-name">The Heat Box</div>
+        <p class="ccard-desc">For those who like their kebabs with a kick. Double the spice, zero the regret.</p>
+        <div class="ccard-list">
+          <div class="ccard-li">2 Spicy Zinger Kebabs</div>
+          <div class="ccard-li">Loaded Fries</div>
+          <div class="ccard-li">Cooling Dip + Drink</div>
+        </div>
+        <button class="btn-r" onclick="order()">Order Now →</button>
+      </div>
+      <div class="ccard reveal" style="transition-delay:.18s">
+        <span class="ccard-icon">📦</span>
+        <div class="ccard-name">The Share Box</div>
+        <p class="ccard-desc">Built for two but nobody ever shares. Enough said.</p>
+        <div class="ccard-list">
+          <div class="ccard-li">4 Mixed Kebabs (your pick)</div>
+          <div class="ccard-li">Large Fries + 2 Dips</div>
+          <div class="ccard-li">2 Drinks</div>
+        </div>
+        <button class="btn-r" onclick="order()">Order Now →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROOF -->
+  <div class="proof-wrap reveal">
+    <div class="proof-inner">
+      <div style="text-align:center;margin-bottom:.5rem">
+        <div class="lbl">What People Are Saying</div>
+        <h2 class="h2">Bengaluru Approved.</h2>
+      </div>
+      <div class="proof-grid">
+        <div class="pcard reveal" style="transition-delay:.05s">
+          <div class="pstars">★★★★★</div>
+          <p class="ptext">"I've been to 3 different Kebab Box outlets and honestly every single one tastes exactly the same — in the best way. That consistency is insane."</p>
+          <div class="pauthor"><div class="pavatar">R</div><div><div class="pname">Rahul M.</div><div class="ploc">Indiranagar · Swiggy Review</div></div></div>
+        </div>
+        <div class="pcard reveal" style="transition-delay:.1s">
+          <div class="pstars">★★★★★</div>
+          <p class="ptext">"Finally a kebab place that doesn't disappoint. The Classic Crunch is legitimately the crispiest chicken I've had. Ordered 4 times this week."</p>
+          <div class="pauthor"><div class="pavatar">P</div><div><div class="pname">Priya S.</div><div class="ploc">Koramangala · Zomato Review</div></div></div>
+        </div>
+        <div class="pcard reveal" style="transition-delay:.15s">
+          <div class="pstars">★★★★★</div>
+          <p class="ptext">"The Share Box is criminally good. 4 kebabs, fries, drinks — delivery in under 25 mins. This is how fast food is supposed to work."</p>
+          <div class="pauthor"><div class="pavatar">A</div><div><div class="pname">Aakash T.</div><div class="ploc">HSR Layout · Google Review</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRANCHISE TEASER -->
+  <div class="ft-wrap reveal">
+    <div class="ft-inner">
+      <div class="lbl" style="text-align:center">Grow With Us</div>
+      <h2 class="h2" style="margin-bottom:1rem">Want to Own a Kebab Box?</h2>
+      <p class="sub" style="margin:0 auto 2.2rem;text-align:center">A proven system, a craveable product, full operational support — everything you need to run a successful QSR. We're expanding across Bengaluru and beyond.</p>
+      <button class="btn-r" onclick="go('franchise')">Explore Franchise →</button>
+    </div>
+  </div>
+
+  <footer><div class="foot-inner">
+    <div class="foot-top">
+      <div>
+        <div class="foot-logo" onclick="go('home')">KEBAB <span>BOX</span></div>
+        <p class="foot-tag">Fried chicken kebabs built on systems, not guesswork. Bengaluru's crunchiest obsession.</p>
+        <div class="socials">
+          <div class="soc">📸</div><div class="soc">𝕏</div><div class="soc">▶</div><div class="soc">💬</div>
+        </div>
+      </div>
+      <div class="fcol"><h4>Explore</h4><ul>
+        <li onclick="go('menu')">Menu</li><li onclick="go('about')">About Us</li>
+        <li onclick="go('locations')">Locations</li><li onclick="go('franchise')">Franchise</li>
+      </ul></div>
+      <div class="fcol"><h4>Order</h4><ul>
+        <li onclick="order()">Order on Swiggy</li><li onclick="order()">Order on Zomato</li><li onclick="go('locations')">Find a Store</li>
+      </ul></div>
+      <div class="fcol"><h4>Connect</h4><ul>
+        <li onclick="go('contact')">Contact Us</li><li onclick="go('franchise')">Partner With Us</li><li>Careers</li>
+      </ul></div>
+    </div>
+    <div class="foot-bot">
+      <span class="foot-copy">© 2025 Kebab Box. All rights reserved. Bengaluru, India.</span>
+      <span class="foot-love">Made with <span>♥</span> and too much chicken</span>
+    </div>
+  </div></footer>
+</div>
+
+<!-- ══════════════════════════════
+     MENU PAGE
+══════════════════════════════ -->
+<div class="pg" id="pg-menu">
+  <div class="menu-hero reveal">
+    <div class="lbl">Our Full Menu</div>
+    <h1 class="h1" style="font-size:clamp(2.5rem,5vw,4.5rem)">Everything on the Box.</h1>
+    <p class="sub" style="margin:1rem auto 0">No filler. No fluff. Just the stuff that keeps you coming back.</p>
+    <div class="menu-cats">
+      <button class="mcat on" onclick="filterMenu('all',this)">All Items</button>
+      <button class="mcat" onclick="filterMenu('kebab',this)">Kebabs</button>
+      <button class="mcat" onclick="filterMenu('wrap',this)">Wraps</button>
+      <button class="mcat" onclick="filterMenu('combo',this)">Combos</button>
+      <button class="mcat" onclick="filterMenu('sides',this)">Sides</button>
+      <button class="mcat" onclick="filterMenu('drinks',this)">Drinks</button>
+    </div>
+  </div>
+
+  <div class="menu-grid-wrap">
+    <div class="menu-grid" id="menuGrid">
+      <!-- KEBABS -->
+      <div class="menu-item show" data-cat="kebab">
+        <div class="mi-card">
+          <div class="mi-top"><span class="badge">🔥 Bestseller</span><span class="mi-emoji">🍗</span></div>
+          <div class="mi-body">
+            <div class="mi-name">Classic Crunch Kebab</div>
+            <p class="mi-desc">Our original. Crispy coat, juicy inside. The one that started it all.</p>
+            <div class="mi-footer"><div class="mcard-tags"><span class="tag">Signature</span></div><button class="mi-order" onclick="order()">Order →</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-item show" data-cat="kebab">
+        <div class="mi-card">
+          <div class="mi-top"><span class="mi-emoji">🌶️</span></div>
+          <div class="mi-body">
+            <div class="mi-name">Spicy Zinger Kebab</div>
+            <p class="mi-desc">Fire-kissed marinade, double-fried. Not for the faint-hearted. For everyone else.</p>
+            <div class="mi-footer"><div class="mcard-tags"><span class="tag">Spicy</span></div><button class="mi-order" onclick="order()">Order →</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-item show" data-cat="kebab">
+        <div class="mi-card">
+          <div class="mi-top"><span class="badge">⭐ New</span><span class="mi-emoji">🥩</span></div>
+          <div class="mi-body">
+            <div class="mi-name">BBQ Smoke Kebab</div>
+            <p class="mi-desc">Slow-marinated in smoky BBQ, crispy fried. Deep flavour. Deeper cravings.</p>
+            <div class="mi-footer"><div class="mcard-tags"><span class="tag">Smoky</span></div><button class="mi-order" onclick="order()">Order →</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-item show" data-cat="kebab">
+        <div class="mi-card">
+          <div class="mi-top"><span class="mi-emoji">🧄</span></div>
+          <div class="mi-body">
+            <div class="mi-name">Garlic Parmesan Kebab</div>
+            <p class="mi-desc">A buttery garlic glaze with parm dust. Elevated. Still a kebab. Still perfect.</p>
+            <div class="mi-footer"><div class="mcard-tags"><span class="tag">Premium</span></div><button class="mi-order" onclick="order()">Order →</button></div>
+          </div>
+        </div>
+      </div>
+      <!-- WRAPS -->
+      <div class="menu-item show" data-cat="wrap">
+        <div class="mi-card">
+          <div class="mi-top"><span class="mi-emoji">🥙</span></div>
+          <div class="mi-body">
+            <div class="mi-name">Smoky Kebab Wrap</div>
+            <p class="mi-desc">Crispy strips, smoky sauce, slaw. Rolled tight. Eaten fast. Regretted never.</p>
+            <div class="mi-footer"><div class="mcard-tags"><span class="tag">Wrap</span></div><button class="mi-order" onclick="order()">Order →</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-item show" data-cat="wrap">
+        <div class="mi-card">
+          <div class="mi-top"><span class="badge">🔥 Fan Fav</span><span class="mi-emoji">🌯</span></div>
+          <div class="mi-body">
+            <div class="mi-name">Zinger Crunch Wrap</div>
+            <p class="mi-desc">Spicy kebab, crispy lettuce, sriracha mayo. The one that breaks Instagram.</p>
+            <div class="mi-footer"><div class="mcard-tags"><span class="tag">Spicy</span><span class="tag">Wrap</span></div><button class="mi-order" onclick="order()">Order →</button></div>
+          </div>
+        </div>
+      </div>
+      <!-- COMBOS -->
+      <div class="menu-item show" data-cat="combo">
+        <div class="mi-card">
+          <div class="mi-top"><span class="badge">🔥 Bestseller</span><span class="mi-emoji">📦</span></div>
+          <div class="mi-body">
+            <div class="mi-name">The Solo Box</div>
+            <p class="mi-desc">2 Classic Crunch kebabs + fries + dip. Your perfect solo mission.</p>
+            <div class="mi-footer"><div class="mcard-tags"><span class="tag">Combo</span></div><button class="mi-order" onclick="order()">Order →</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-item show" data-cat="combo">
+        <div class="mi-card">
+          <div class="mi-top"><span class="mi-emoji">🔥</span></div>
+          <div class="mi-body">
+            <div class="mi-name">The Heat Box</div>
+            <p class="mi-desc">2 Spicy Zingers + loaded fries + cooling dip + drink. Maximum heat.</p>
+            <div class="mi-footer"><div class="mcard-tags"><span class="tag">Spicy</span><span class="tag">Combo</span></div><button class="mi-order" onclick="order()">Order →</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-item show" data-cat="combo">
+        <div class="mi-card">
+          <div class="mi-top"><span class="mi-emoji">🎉</span></div>
+          <div class="mi-body">
+            <div class="mi-name">The Share Box</div>
+            <p class="mi-desc">4 mixed kebabs + large fries + 2 dips + 2 drinks. For two. Eaten by one.</p>
+            <div class="mi-footer"><div class="mcard-tags"><span class="tag">Share</span><span class="tag">Combo</span></div><button class="mi-order" onclick="order()">Order →</button></div>
+          </div>
+        </div>
+      </div>
+      <!-- SIDES -->
+      <div class="menu-item show" data-cat="sides">
+        <div class="mi-card">
+          <div class="mi-top"><span class="mi-emoji">🍟</span></div>
+          <div class="mi-body">
+            <div class="mi-name">Crispy Fries</div>
+            <p class="mi-desc">Double-fried, seasoned with our house spice blend. Addictive by design.</p>
+            <div class="mi-footer"><div class="mcard-tags"><span class="tag">Side</span></div><button class="mi-order" onclick="order()">Order →</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-item show" data-cat="sides">
+        <div class="mi-card">
+          <div class="mi-top"><span class="mi-emoji">🥗</span></div>
+          <div class="mi-body">
+            <div class="mi-name">Crunchy Slaw</div>
+            <p class="mi-desc">Fresh, light, tangy. The perfect contrast to your crispy kebab.</p>
+            <div class="mi-footer"><div class="mcard-tags"><span class="tag">Side</span><span class="tag">Fresh</span></div><button class="mi-order" onclick="order()">Order →</button></div>
+          </div>
+        </div>
+      </div>
+      <!-- DRINKS -->
+      <div class="menu-item show" data-cat="drinks">
+        <div class="mi-card">
+          <div class="mi-top"><span class="mi-emoji">🥤</span></div>
+          <div class="mi-body">
+            <div class="mi-name">KB Lemonade</div>
+            <p class="mi-desc">Fresh-squeezed, lightly spiced. The ultimate kebab companion.</p>
+            <div class="mi-footer"><div class="mcard-tags"><span class="tag">Drink</span></div><button class="mi-order" onclick="order()">Order →</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer><div class="foot-inner">
+    <div class="foot-top">
+      <div><div class="foot-logo" onclick="go('home')">KEBAB <span>BOX</span></div><p class="foot-tag">Bengaluru's home of fried chicken kebabs. Built on systems. Served with love.</p><div class="socials"><div class="soc">📸</div><div class="soc">𝕏</div><div class="soc">▶</div></div></div>
+      <div class="fcol"><h4>Explore</h4><ul><li onclick="go('home')">Home</li><li onclick="go('about')">About</li><li onclick="go('locations')">Locations</li><li onclick="go('franchise')">Franchise</li></ul></div>
+      <div class="fcol"><h4>Order</h4><ul><li onclick="order()">Swiggy</li><li onclick="order()">Zomato</li><li onclick="go('locations')">In-Store</li></ul></div>
+      <div class="fcol"><h4>Connect</h4><ul><li onclick="go('contact')">Contact</li><li onclick="go('franchise')">Partner</li></ul></div>
+    </div>
+    <div class="foot-bot"><span class="foot-copy">© 2025 Kebab Box. Bengaluru, India.</span><span class="foot-love">Same crunch. <span>Every time.</span></span></div>
+  </div></footer>
+</div>
+
+<!-- ══════════════════════════════
+     ABOUT PAGE
+══════════════════════════════ -->
+<div class="pg" id="pg-about">
+  <div class="about-hero">
+    <div class="about-hero-inner">
+      <div class="reveal-l">
+        <div class="lbl">Our Story</div>
+        <h1 class="about-h">Not Just <span class="accent">Kebabs.</span><br>A System.</h1>
+        <div class="about-body">
+          <p>Kebab Box was built with one obsessive question: <strong>what if every fried chicken kebab tasted exactly the same?</strong> Not sometimes. Not on a good day. Every. Single. Time.</p>
+          <p>Most QSRs rely on individual skill — the chef who's been there 10 years, the one who knows the right oil temperature by feel. We built a brand that removes that dependency entirely.</p>
+          <p><strong>Standardised recipes. Engineered kitchens. Measurable outcomes.</strong> The result? A kebab that tastes identical at outlet one as it will at outlet fifty.</p>
+        </div>
+      </div>
+      <div class="reveal-r">
+        <div class="about-vis">
+          <div class="about-circle"></div>
+          <div class="about-icon-big">🍗</div>
+        </div>
+        <div class="brand-nums">
+          <div class="bnum-item"><div class="bnum-n">3+</div><div class="bnum-l">Outlets Open</div></div>
+          <div class="bnum-item"><div class="bnum-n">100%</div><div class="bnum-l">System-Driven</div></div>
+          <div class="bnum-item"><div class="bnum-n">&lt;8m</div><div class="bnum-l">Order Time</div></div>
+          <div class="bnum-item"><div class="bnum-n">★ 4.8</div><div class="bnum-l">Avg. Rating</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Values Strip -->
+  <div class="val-strip reveal">
+    <div class="val-inner">
+      <div class="val-item">
+        <div class="val-big">01</div>
+        <div class="val-title">Consistency Over Complexity</div>
+        <p class="val-desc">We don't do 80-item menus. We do a few things and do them perfectly, every single time.</p>
+      </div>
+      <div class="val-item">
+        <div class="val-big">02</div>
+        <div class="val-title">Systems Over Skill</div>
+        <p class="val-desc">Our processes are designed so the food is always great — regardless of who's in the kitchen.</p>
+      </div>
+      <div class="val-item">
+        <div class="val-big">03</div>
+        <div class="val-title">Speed Without Compromise</div>
+        <p class="val-desc">Fast food that actually tastes like someone cared about making it. That's our non-negotiable.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="timeline-wrap reveal">
+    <div class="lbl">How We Got Here</div>
+    <h2 class="h2">The Kebab Box Journey</h2>
+    <div class="tl">
+      <div class="tl-item reveal" style="transition-delay:.05s">
+        <div class="tl-dot">💡</div>
+        <div><div class="tl-title">The Obsession Begins</div><p class="tl-desc">Started with one question: why does the same dish taste different at every kebab shop in Bengaluru? The answer became our brand strategy.</p></div>
+      </div>
+      <div class="tl-item reveal" style="transition-delay:.12s">
+        <div class="tl-dot">🧪</div>
+        <div><div class="tl-title">The Recipe Lab</div><p class="tl-desc">Months of testing, measuring, and documenting — building the exact recipe that produces the perfect crunch, consistently, at any scale.</p></div>
+      </div>
+      <div class="tl-item reveal" style="transition-delay:.18s">
+        <div class="tl-dot">🚀</div>
+        <div><div class="tl-title">First Outlet — Bengaluru</div><p class="tl-desc">Opened our first Kebab Box in Bengaluru. Lines out the door. Reviews pouring in. The system worked.</p></div>
+      </div>
+      <div class="tl-item reveal" style="transition-delay:.24s">
+        <div class="tl-dot">📈</div>
+        <div><div class="tl-title">Scaling with Systems</div><p class="tl-desc">3 outlets now running on the same proven playbook. Every one serves the same crunch. That's not luck — that's architecture.</p></div>
+      </div>
+      <div class="tl-item reveal" style="transition-delay:.3s">
+        <div class="tl-dot">🌏</div>
+        <div><div class="tl-title">What's Next</div><p class="tl-desc">Franchise-ready and expanding. The Kebab Box system is built to work anywhere in India — and eventually beyond.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <footer><div class="foot-inner">
+    <div class="foot-top">
+      <div><div class="foot-logo" onclick="go('home')">KEBAB <span>BOX</span></div><p class="foot-tag">Built on systems. Served with obsession.</p><div class="socials"><div class="soc">📸</div><div class="soc">𝕏</div><div class="soc">▶</div></div></div>
+      <div class="fcol"><h4>Explore</h4><ul><li onclick="go('menu')">Menu</li><li onclick="go('locations')">Locations</li><li onclick="go('franchise')">Franchise</li><li onclick="go('contact')">Contact</li></ul></div>
+      <div class="fcol"><h4>Order</h4><ul><li onclick="order()">Swiggy</li><li onclick="order()">Zomato</li></ul></div>
+      <div class="fcol"><h4>Connect</h4><ul><li onclick="go('contact')">Contact Us</li><li onclick="go('franchise')">Partner With Us</li></ul></div>
+    </div>
+    <div class="foot-bot"><span class="foot-copy">© 2025 Kebab Box. Bengaluru, India.</span><span class="foot-love">Same crunch. <span>Every time.</span></span></div>
+  </div></footer>
+</div>
+
+<!-- ══════════════════════════════
+     LOCATIONS PAGE
+══════════════════════════════ -->
+<div class="pg" id="pg-locations">
+  <div class="loc-hero reveal">
+    <div class="lbl">Find Us</div>
+    <h1 class="h1" style="font-size:clamp(2.5rem,5vw,4.5rem)">We're in Bengaluru.<br><span class="accent">For Now.</span></h1>
+    <p class="sub" style="margin:1rem auto 0">3 outlets and counting. Pick your closest box and get cracking.</p>
+    <div class="city-pills">
+      <button class="cpill on">Bengaluru</button>
+      <button class="cpill" style="opacity:.4;cursor:not-allowed">Mumbai (Soon)</button>
+      <button class="cpill" style="opacity:.4;cursor:not-allowed">Delhi (Soon)</button>
+      <button class="cpill" style="opacity:.4;cursor:not-allowed">Hyderabad (Soon)</button>
+    </div>
+  </div>
+
+  <div class="loc-grid">
+    <div class="loc-card reveal" style="transition-delay:.05s">
+      <div class="loc-map"><span class="loc-pin">📍</span></div>
+      <div class="loc-body">
+        <div class="loc-name">Indiranagar</div>
+        <p class="loc-addr">100 Feet Road, Indiranagar,<br>Bengaluru – 560038</p>
+        <div class="loc-hrs">🕐 11am – 11pm, All Days</div>
+        <div class="loc-btns">
+          <button class="lbtn lbtn-r" onclick="order()">Order Now</button>
+          <button class="lbtn lbtn-s">Get Directions</button>
+        </div>
+      </div>
+    </div>
+    <div class="loc-card reveal" style="transition-delay:.12s">
+      <div class="loc-map"><span class="loc-pin">📍</span></div>
+      <div class="loc-body">
+        <div class="loc-name">Koramangala</div>
+        <p class="loc-addr">5th Block, Koramangala,<br>Bengaluru – 560095</p>
+        <div class="loc-hrs">🕐 11am – 11pm, All Days</div>
+        <div class="loc-btns">
+          <button class="lbtn lbtn-r" onclick="order()">Order Now</button>
+          <button class="lbtn lbtn-s">Get Directions</button>
+        </div>
+      </div>
+    </div>
+    <div class="loc-card reveal" style="transition-delay:.18s">
+      <div class="loc-map"><span class="loc-pin">📍</span></div>
+      <div class="loc-body">
+        <div class="loc-name">HSR Layout</div>
+        <p class="loc-addr">Sector 6, HSR Layout,<br>Bengaluru – 560102</p>
+        <div class="loc-hrs">🕐 11am – 11:30pm, All Days</div>
+        <div class="loc-btns">
+          <button class="lbtn lbtn-r" onclick="order()">Order Now</button>
+          <button class="lbtn lbtn-s">Get Directions</button>
+        </div>
+      </div>
+    </div>
+    <div class="loc-card loc-soon reveal" style="transition-delay:.24s">
+      <div class="loc-map">
+        <span class="soon-badge">Opening Soon</span>
+        <span style="font-size:3rem;opacity:.4">🗺️</span>
+      </div>
+      <div class="loc-body">
+        <div class="loc-name">Whitefield</div>
+        <p class="loc-addr">Bengaluru East – 560066</p>
+        <div class="loc-hrs" style="color:rgba(255,255,240,.3)">🕐 Coming Q3 2025</div>
+        <div class="loc-btns">
+          <button class="lbtn lbtn-s" style="flex:1;cursor:not-allowed;opacity:.5">Notify Me</button>
+        </div>
+      </div>
+    </div>
+    <div class="loc-card loc-soon reveal" style="transition-delay:.28s">
+      <div class="loc-map">
+        <span class="soon-badge">Opening Soon</span>
+        <span style="font-size:3rem;opacity:.4">🗺️</span>
+      </div>
+      <div class="loc-body">
+        <div class="loc-name">Jayanagar</div>
+        <p class="loc-addr">Bengaluru South – 560041</p>
+        <div class="loc-hrs" style="color:rgba(255,255,240,.3)">🕐 Coming Q4 2025</div>
+        <div class="loc-btns">
+          <button class="lbtn lbtn-s" style="flex:1;cursor:not-allowed;opacity:.5">Notify Me</button>
+        </div>
+      </div>
+    </div>
+    <div class="loc-card reveal" style="transition-delay:.32s;background:rgba(219,0,7,.06);border-color:rgba(219,0,7,.2);cursor:pointer" onclick="go('franchise')">
+      <div class="loc-map" style="background:rgba(219,0,7,.1)"><span style="font-size:3rem">🚀</span></div>
+      <div class="loc-body">
+        <div class="loc-name" style="color:var(--red)">Your City Next?</div>
+        <p class="loc-addr">We're expanding fast. Bring Kebab Box to your city with a franchise.</p>
+        <div class="loc-btns">
+          <button class="lbtn lbtn-r" onclick="go('franchise')">Learn More →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer><div class="foot-inner">
+    <div class="foot-top">
+      <div><div class="foot-logo" onclick="go('home')">KEBAB <span>BOX</span></div><p class="foot-tag">Bengaluru first. India next.</p><div class="socials"><div class="soc">📸</div><div class="soc">𝕏</div><div class="soc">▶</div></div></div>
+      <div class="fcol"><h4>Explore</h4><ul><li onclick="go('menu')">Menu</li><li onclick="go('about')">About</li><li onclick="go('franchise')">Franchise</li><li onclick="go('contact')">Contact</li></ul></div>
+      <div class="fcol"><h4>Order</h4><ul><li onclick="order()">Swiggy</li><li onclick="order()">Zomato</li></ul></div>
+      <div class="fcol"><h4>Locations</h4><ul><li>Indiranagar</li><li>Koramangala</li><li>HSR Layout</li></ul></div>
+    </div>
+    <div class="foot-bot"><span class="foot-copy">© 2025 Kebab Box. Bengaluru, India.</span><span class="foot-love">Same crunch. <span>Every time.</span></span></div>
+  </div></footer>
+</div>
+
+<!-- ══════════════════════════════
+     FRANCHISE PAGE
+══════════════════════════════ -->
+<div class="pg" id="pg-franchise">
+  <div class="fran-hero">
+    <div class="fran-hero-inner">
+      <div class="reveal-l">
+        <div class="lbl">Franchise Opportunity</div>
+        <h1 class="h1">Own the Crunch.<br><span class="accent">Build a Business.</span></h1>
+        <p class="sub" style="margin:.9rem 0 0;max-width:480px">Kebab Box is a proven, system-driven QSR brand looking for driven operators to grow with us. You bring the ambition. We bring the playbook.</p>
+        <div class="fran-kpi">
+          <div class="fkpi"><div class="fkpi-n">3+</div><div class="fkpi-l">Outlets Running</div></div>
+          <div class="fkpi"><div class="fkpi-n">4.8★</div><div class="fkpi-l">Avg. Rating</div></div>
+          <div class="fkpi"><div class="fkpi-n">100%</div><div class="fkpi-l">System-Driven</div></div>
+        </div>
+        <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap">
+          <button class="btn-r" onclick="go('contact')">Apply Now →</button>
+          <button class="btn-o" onclick="document.getElementById('proc').scrollIntoView({behavior:'smooth'})">How it Works</button>
+        </div>
+      </div>
+      <div class="fran-vis reveal-r">
+        <div class="about-circle"></div>
+        <div class="fran-icon">📦</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Why Kebab Box -->
+  <div class="why-wrap reveal">
+    <div class="why-inner">
+      <div class="lbl">Why Kebab Box</div>
+      <h2 class="h2" style="color:var(--black)">The Smart Franchise Choice.</h2>
+      <p class="sub" style="margin:.8rem 0 0;color:rgba(40,40,43,.6)">We've built everything you need to succeed — you just need to run it.</p>
+      <div class="why-grid">
+        <div class="wcard reveal" style="transition-delay:.05s"><div class="wicon">⚙️</div><div class="wtitle">Plug-and-Play System</div><p class="wdesc">Every process is documented. From kitchen layout to order flow — it's all in the playbook.</p></div>
+        <div class="wcard reveal" style="transition-delay:.1s"><div class="wicon">📋</div><div class="wtitle">Full Training Support</div><p class="wdesc">We train your entire team before day one. Zero experience required. Serious commitment required.</p></div>
+        <div class="wcard reveal" style="transition-delay:.14s"><div class="wicon">📦</div><div class="wtitle">Supply Chain Ready</div><p class="wdesc">Centralised ingredients and supply. Consistent quality without the sourcing headache.</p></div>
+        <div class="wcard reveal" style="transition-delay:.18s"><div class="wicon">📊</div><div class="wtitle">Proven Unit Economics</div><p class="wdesc">Our existing outlets have demonstrated strong returns with lean operations and low waste.</p></div>
+        <div class="wcard reveal" style="transition-delay:.22s"><div class="wicon">🎨</div><div class="wtitle">Brand That Stands Out</div><p class="wdesc">A vibrant, modern QSR identity that customers recognise and trust — built for long-term scale.</p></div>
+        <div class="wcard reveal" style="transition-delay:.26s"><div class="wicon">🤝</div><div class="wtitle">Ongoing Operator Support</div><p class="wdesc">We don't just hand you the keys and leave. Our team is with you through every phase of growth.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Investment Tiers -->
+  <div class="inv-sec reveal">
+    <div class="inv-inner">
+      <div class="lbl">Investment Overview</div>
+      <h2 class="h2">Find Your Format.</h2>
+      <p class="sub" style="margin:.8rem 0 0">Three formats built for different locations and ambitions. All run on the same system.</p>
+      <div class="inv-grid">
+        <div class="inv-card reveal" style="transition-delay:.05s">
+          <div class="inv-type">Starter Format</div>
+          <div class="inv-name">Express Kiosk</div>
+          <div class="inv-amt">₹15–25L</div>
+          <div class="inv-unit">Estimated Investment</div>
+          <ul class="inv-feats">
+            <li>150–300 sq.ft footprint</li>
+            <li>Food courts, malls, transit hubs</li>
+            <li>Core 6-item menu</li>
+            <li>2–4 staff operation</li>
+            <li>Full brand + system support</li>
+          </ul>
+          <button class="btn-o" onclick="go('contact')">Enquire →</button>
+        </div>
+        <div class="inv-card feat reveal" style="transition-delay:.1s">
+          <div class="inv-type">Core Format</div>
+          <div class="inv-name">Quick Service</div>
+          <div class="inv-amt">₹30–50L</div>
+          <div class="inv-unit">Estimated Investment</div>
+          <ul class="inv-feats">
+            <li>400–700 sq.ft dine-in space</li>
+            <li>High-street & residential areas</li>
+            <li>Full menu + combos</li>
+            <li>4–7 staff operation</li>
+            <li>Swiggy/Zomato integration</li>
+            <li>Marketing & POS support</li>
+          </ul>
+          <button class="btn-r" onclick="go('contact')">Apply Now →</button>
+        </div>
+        <div class="inv-card reveal" style="transition-delay:.15s">
+          <div class="inv-type">Flagship Format</div>
+          <div class="inv-name">Full Outlet</div>
+          <div class="inv-amt">₹60–90L</div>
+          <div class="inv-unit">Estimated Investment</div>
+          <ul class="inv-feats">
+            <li>800–1200 sq.ft premium space</li>
+            <li>High-traffic commercial zones</li>
+            <li>Full menu + seasonal specials</li>
+            <li>8–12 staff operation</li>
+            <li>Full tech & POS setup</li>
+            <li>Priority brand placement</li>
+          </ul>
+          <button class="btn-o" onclick="go('contact')">Enquire →</button>
+        </div>
+      </div>
+      <p style="text-align:center;font-size:.8rem;color:rgba(255,255,240,.3);margin-top:1.5rem">* All figures are estimates. Final investment depends on location, lease, and fit-out costs. Contact us for a detailed breakdown.</p>
+    </div>
+  </div>
+
+  <!-- Process -->
+  <div class="proc-wrap reveal" id="proc">
+    <div class="proc-inner">
+      <div class="lbl">The Journey</div>
+      <h2 class="h2">From Application to Opening Day.</h2>
+      <p class="sub" style="margin:.8rem 0 0">A clear, no-confusion roadmap to getting your Kebab Box up and running.</p>
+      <div class="proc-grid">
+        <div class="proc-step reveal" style="transition-delay:.05s"><div class="proc-n">01</div><div class="proc-icon">📝</div><div class="proc-title">Apply Online</div><p class="proc-desc">Fill out our franchise enquiry form. Tell us about yourself and your target location.</p></div>
+        <div class="proc-step reveal" style="transition-delay:.1s"><div class="proc-n">02</div><div class="proc-icon">📞</div><div class="proc-title">Discovery Call</div><p class="proc-desc">A 30-min call with our franchise team. We get to know you, you get to know us.</p></div>
+        <div class="proc-step reveal" style="transition-delay:.14s"><div class="proc-n">03</div><div class="proc-icon">📊</div><div class="proc-title">Site Evaluation</div><p class="proc-desc">We assess your proposed location — footfall, demographics, feasibility.</p></div>
+        <div class="proc-step reveal" style="transition-delay:.18s"><div class="proc-n">04</div><div class="proc-icon">🤝</div><div class="proc-title">Sign Agreement</div><p class="proc-desc">Franchise agreement signed. Investment confirmed. You're officially a Kebab Box partner.</p></div>
+        <div class="proc-step reveal" style="transition-delay:.22s"><div class="proc-n">05</div><div class="proc-icon">🏗️</div><div class="proc-title">Setup & Training</div><p class="proc-desc">Outlet fitout + full team training. Our team oversees everything from day zero.</p></div>
+        <div class="proc-step reveal" style="transition-delay:.26s"><div class="proc-n">06</div><div class="proc-icon">🚀</div><div class="proc-title">Grand Opening</div><p class="proc-desc">Launch day. We're there with you. The crunch is ready. So are you.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="fran-cta reveal">
+    <div class="fran-cta-inner">
+      <div class="fran-cta-t">Ready to Own the Crunch?</div>
+      <p class="fran-cta-s">Join a fast-growing QSR brand built on systems, not guesswork. Limited franchise slots available for Bengaluru expansion.</p>
+      <button class="btn-w" onclick="go('contact')">Apply for a Franchise →</button>
+    </div>
+  </div>
+
+  <footer><div class="foot-inner">
+    <div class="foot-top">
+      <div><div class="foot-logo" onclick="go('home')">KEBAB <span>BOX</span></div><p class="foot-tag">A franchise built for scale. A product built for cravings.</p><div class="socials"><div class="soc">📸</div><div class="soc">𝕏</div><div class="soc">▶</div></div></div>
+      <div class="fcol"><h4>Franchise</h4><ul><li>Express Kiosk</li><li>Quick Service</li><li>Full Outlet</li></ul></div>
+      <div class="fcol"><h4>Explore</h4><ul><li onclick="go('menu')">Menu</li><li onclick="go('about')">About</li><li onclick="go('locations')">Locations</li></ul></div>
+      <div class="fcol"><h4>Apply</h4><ul><li onclick="go('contact')">Enquiry Form</li><li onclick="go('contact')">Contact Team</li></ul></div>
+    </div>
+    <div class="foot-bot"><span class="foot-copy">© 2025 Kebab Box. Bengaluru, India.</span><span class="foot-love">Same crunch. <span>Every time.</span></span></div>
+  </div></footer>
+</div>
+
+<!-- ══════════════════════════════
+     CONTACT PAGE
+══════════════════════════════ -->
+<div class="pg" id="pg-contact">
+  <div class="cont-hero reveal">
+    <div class="lbl">Get In Touch</div>
+    <h1 class="h1" style="font-size:clamp(2.5rem,5vw,4.5rem)">Let's Talk <span class="accent">Kebabs.</span></h1>
+    <p class="sub" style="margin:1rem auto 0">Whether you're hungry, curious, or ready to partner up — we're one message away.</p>
+  </div>
+
+  <div class="cont-wrap">
+    <div class="reveal-l">
+      <div style="margin-bottom:2rem">
+        <div class="h3" style="margin-bottom:.4rem;font-size:1rem;opacity:.5;text-transform:uppercase;letter-spacing:2px">Contact Info</div>
+      </div>
+      <div class="cinfo-item">
+        <div class="cicon">📍</div>
+        <div><div class="cilbl">Headquarters</div><div class="cival">Bengaluru, Karnataka, India</div></div>
+      </div>
+      <div class="cinfo-item">
+        <div class="cicon">📧</div>
+        <div><div class="cilbl">Email Us</div><div class="cival">hello@kebabbox.in</div></div>
+      </div>
+      <div class="cinfo-item">
+        <div class="cicon">📱</div>
+        <div><div class="cilbl">Call / WhatsApp</div><div class="cival">+91 98XXX XXXXX</div></div>
+      </div>
+      <div class="cinfo-item">
+        <div class="cicon">🕐</div>
+        <div><div class="cilbl">Response Time</div><div class="cival">We reply within 24 hours.<br>Franchise queries within 48 hours.</div></div>
+      </div>
+      <div class="cinfo-item" style="background:rgba(219,0,7,.08);border-color:rgba(219,0,7,.25);cursor:pointer" onclick="order()">
+        <div class="cicon">🍗</div>
+        <div><div class="cilbl">Order Online</div><div class="cival">Available on Swiggy & Zomato →</div></div>
+      </div>
+    </div>
+
+    <div class="reveal-r">
+      <div style="background:var(--black2);border-radius:16px;padding:2.5rem;border:1px solid rgba(255,255,240,.07)">
+        <h2 class="h3" style="margin-bottom:1.5rem">Send Us a Message</h2>
+        <div class="form-row">
+          <div class="form-g"><label class="form-lbl">First Name</label><input class="finp" type="text" placeholder="Rahul"></div>
+          <div class="form-g"><label class="form-lbl">Last Name</label><input class="finp" type="text" placeholder="Sharma"></div>
+        </div>
+        <div class="form-g"><label class="form-lbl">Email Address</label><input class="finp" type="email" placeholder="rahul@email.com"></div>
+        <div class="form-g"><label class="form-lbl">Phone Number</label><input class="finp" type="tel" placeholder="+91 9XXXXXXXXX"></div>
+        <div class="form-g">
+          <label class="form-lbl">I'm reaching out about</label>
+          <select class="fsel">
+            <option value="">Select a topic</option>
+            <option>Franchise / Partnership Enquiry</option>
+            <option>General Question</option>
+            <option>Feedback / Review</option>
+            <option>Media / Press</option>
+            <option>Catering / Bulk Order</option>
+            <option>Something Else</option>
+          </select>
+        </div>
+        <div class="form-g"><label class="form-lbl">Message</label><textarea class="ftxt" placeholder="Tell us what's on your mind..."></textarea></div>
+        <button class="btn-r" style="width:100%;justify-content:center;padding:1rem" onclick="submitForm()">Send Message →</button>
+        <p class="form-note">We take your privacy seriously. No spam, ever.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer><div class="foot-inner">
+    <div class="foot-top">
+      <div><div class="foot-logo" onclick="go('home')">KEBAB <span>BOX</span></div><p class="foot-tag">Always happy to talk kebabs — or business.</p><div class="socials"><div class="soc">📸</div><div class="soc">𝕏</div><div class="soc">▶</div></div></div>
+      <div class="fcol"><h4>Explore</h4><ul><li onclick="go('menu')">Menu</li><li onclick="go('about')">About</li><li onclick="go('locations')">Locations</li><li onclick="go('franchise')">Franchise</li></ul></div>
+      <div class="fcol"><h4>Order</h4><ul><li onclick="order()">Swiggy</li><li onclick="order()">Zomato</li></ul></div>
+      <div class="fcol"><h4>Legal</h4><ul><li>Privacy Policy</li><li>Terms of Use</li><li>Franchise T&C</li></ul></div>
+    </div>
+    <div class="foot-bot"><span class="foot-copy">© 2025 Kebab Box. All rights reserved. Bengaluru, India.</span><span class="foot-love">Made with <span>♥</span> in Bengaluru</span></div>
+  </div></footer>
+</div>
+
+<script>
+// ── PAGE ROUTING ──
+function go(p){
+  document.querySelectorAll('.pg').forEach(el=>el.classList.remove('on'));
+  document.getElementById('pg-'+p).classList.add('on');
+  document.querySelectorAll('.nl').forEach(a=>a.classList.toggle('on',a.dataset.p===p));
+  window.scrollTo({top:0});
+  setTimeout(initReveal,80);
+}
+
+// ── ORDER ──
+function order(){
+  const u=confirm('🍗 How would you like to order?\n\nClick OK for Swiggy\nClick Cancel for Zomato');
+  if(u) window.open('https://www.swiggy.com/search?query=kebab+box+bengaluru','_blank');
+  else window.open('https://www.zomato.com/bangalore/kebab-box','_blank');
+}
+
+// ── MOBILE MENU ──
+function openMob(){document.getElementById('mob').classList.add('show')}
+function closeMob(){document.getElementById('mob').classList.remove('show')}
+
+// ── STICKY NAV ──
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('solid',window.scrollY>60);
+});
+
+// ── SCROLL REVEAL ──
+function initReveal(){
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')});
+  },{threshold:.08,rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.pg.on .reveal,.pg.on .reveal-l,.pg.on .reveal-r').forEach(el=>{
+    obs.observe(el);
+  });
+}
+initReveal();
+
+// ── MENU FILTER ──
+function filterMenu(cat,btn){
+  document.querySelectorAll('.mcat').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.menu-item').forEach(item=>{
+    const show=cat==='all'||item.dataset.cat===cat;
+    item.classList.toggle('show',show);
+  });
+}
+
+// ── FORM SUBMIT ──
+function submitForm(){
+  alert('✅ Message sent! Our team will get back to you within 24 hours.\n\nThanks for reaching out — expect great things. 🍗');
+}
+</script>
+</body>
+</html>
